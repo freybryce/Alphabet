@@ -17,6 +17,8 @@ import os
 import urllib
 import logging
 import jinja2
+import unicodedata
+from google.appengine.api import urlfetch
 # don't know if the next two are needed, but they are listed in comments for now just in case
 # import time
 # import datetime
@@ -36,11 +38,52 @@ class RedditResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
         main_template = jinja_env.get_template('templates/reddit.html')
-        self.response.out.write(main_template.render())
+        # variables = {
+        #     'search_term': self.request.get("search-input")
+        # }
+        variables = self.fetch_results(self.request.get("search-input"))
+        self.response.out.write(main_template.render(variables))
     # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(arg):
+    def post(self):
         main_template = jinja_env.get_template('templates/reddit.html')
-        self.response.out.write(main_template.render())
+        variables = {
+            'search_term': self.request.get("search-input")
+        }
+        self.response.out.write(main_template.render(variables))
+    def fetch_results(self, search_term):
+        """Use the Reddit API to fetch several posts."""
+        logging.info("===== %s.get()" % self.__class__.__name__)
+
+        base_url = 'https://reddit.com/'
+        # other_params = '&api_key={key}&limit={num}'.format(key=GIPHY_API_KEY, num=10)
+        search_terms = 'search.json?q={term}'.format(term=search_term)
+        fullurl = base_url + search_terms
+        logging.info("Fetching: %s" % fullurl)
+
+        data_source = urlfetch.fetch(fullurl)
+
+        results = json.loads(data_source.content)
+        # Weird issue with href that causes the embeding to load slowly, might have to do with an unnecessary attribute on the the url given to us by the JSON
+        post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
+        subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
+        posts = {
+            'timestamp': results['data']['children'][0]['data']['created'],
+            'post_href': post_href,
+            'title': results['data']['children'][0]['data']['title'],
+            'subreddit_href': subreddit_href,
+            'subreddit_name': results['data']['children'][0]['data']['subreddit'],
+        }
+        return posts
+        # gifs = []
+        # #   for i in results['data']:
+        # #       gifs.append(results['data'][i]['images']['original']['url'])
+        # gifs = [
+        # results['data'][0]['images']['original']['url'],
+        # results['data'][1]['images']['original']['url'],
+        # results['data'][2]['images']['original']['url'],
+        # results['data'][3]['images']['original']['url'],
+        # ]
+        # return gifs
 
 class FacebookResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
@@ -48,7 +91,7 @@ class FacebookResultsHandler(webapp2.RequestHandler):
         main_template = jinja_env.get_template('templates/facebook.html')
         self.response.out.write(main_template.render())
     # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(arg):
+    def post(self):
         main_template = jinja_env.get_template('templates/facebook.html')
         self.response.out.write(main_template.render())
 
@@ -58,7 +101,7 @@ class TwitterResultsHandler(webapp2.RequestHandler):
         main_template = jinja_env.get_template('templates/twitter.html')
         self.response.out.write(main_template.render())
     # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(arg):
+    def post(self):
         main_template = jinja_env.get_template('templates/twitter.html')
         self.response.out.write(main_template.render())
 
@@ -68,7 +111,7 @@ class GiphyResultsHandler(webapp2.RequestHandler):
         main_template = jinja_env.get_template('templates/giphy.html')
         self.response.out.write(main_template.render())
     # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(arg):
+    def post(self):
         main_template = jinja_env.get_template('templates/giphy.html')
         self.response.out.write(main_template.render())
 

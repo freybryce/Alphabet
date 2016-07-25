@@ -8,6 +8,8 @@
     <!-- This is a tag Atom inserts by default (when autocomplete is used that is) but it is important because it improves cross-compatibility in some cases. -->
     <meta charset="utf-8">
     <title>Reddit Results</title>
+    <!-- needed for reddit embed posts to work -->
+    <script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script>
   </head>
   <body>
     <!-- This is set up for a basic search bar and button. Eventually this needs variables and attributes modified to whatever the setup is. -->
@@ -23,6 +25,19 @@
     <a href="/giphy">Giphy Results</a>
     <br>
     <!-- Search results should be displayed below here. -->
+
+    <!-- <blockquote class="reddit-card" data-card-created="1469466396">
+      <a href="https://www.reddit.com/r/pics/comments/4uijxc/dogs_are_not_allowed_on_nyc_subway_unless_theyre/?ref=share&ref_source=embed">Dogs Are Not Allowed On NYC Subway Unless They’re In A Carrier…So This Happened</a>
+       from
+       <a href="http://www.reddit.com/r/pics">pics</a>
+     </blockquote>
+     <script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script> -->
+
+    <blockquote class="reddit-card" data-card-created={{timestamp}}>
+      <a href={{post_href}}>{{title}}</a>
+      <a href{{subreddit_href}}>{{subreddit_name}}</a>
+    </blockquote>
+
 
   </body>
 </html>
