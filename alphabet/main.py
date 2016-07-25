@@ -36,22 +36,26 @@ class MainHandler(webapp2.RequestHandler):
 class RedditResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
-        self.response.write('Hello world! This is the Reddit Handler!')
+        main_template = jinja_env.get_template('templates/reddit.html')
+        self.response.out.write(main_template.render())
 
 class FacebookResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
-        self.response.write('Hello world! This is the Facebook Handler!')
+        main_template = jinja_env.get_template('templates/facebook.html')
+        self.response.out.write(main_template.render())
 
 class TwitterResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests twitter search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
-        self.response.write('Hello world! This is the Twitter Handler!')
+        main_template = jinja_env.get_template('templates/twitter.html')
+        self.response.out.write(main_template.render())
 
 class GiphyResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Giphy search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
-        self.response.write('Hello world! This is the Giphy Handler!')
+        main_template = jinja_env.get_template('templates/giphy.html')
+        self.response.out.write(main_template.render())
 
 class DefaultHandler(webapp2.RequestHandler):
     # This handler should be designed to give the user a page that incourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
