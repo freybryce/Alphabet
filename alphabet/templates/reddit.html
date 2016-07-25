@@ -13,9 +13,10 @@
   </head>
   <body>
     <!-- This is set up for a basic search bar and button. Eventually this needs variables and attributes modified to whatever the setup is. -->
-    <form class="" action="index.html" method="post">
+    <form class="" action="reddit" method="get">
       <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
-      <textarea autofocus="True" name="search_input" rows="8" cols="40"></textarea>
+      <!-- <textarea autofocus="True" name="search_input" rows="8" cols="40" value="example"></textarea> -->
+      <input type="text" name="search_input" value={{search_term}}>
       <!-- Just the submit button. -->
       <input type="submit" name="submit" value="Search">
     <br>

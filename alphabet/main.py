@@ -60,7 +60,7 @@ class RedditResultsHandler(webapp2.RequestHandler):
         logging.info("Fetching: %s" % fullurl)
         data_source = urlfetch.fetch(fullurl)
         results = json.loads(data_source.content)
-        # 
+        #
         # Weird issue with href that causes the embeding to load slowly, might have to do with an unnecessary attribute on the the url given to us by the JSON
         post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
         subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
@@ -70,6 +70,7 @@ class RedditResultsHandler(webapp2.RequestHandler):
             'title': results['data']['children'][0]['data']['title'],
             'subreddit_href': subreddit_href,
             'subreddit_name': results['data']['children'][0]['data']['subreddit'],
+            'search_term': search_term,
         }
         return posts
 
