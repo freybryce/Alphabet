@@ -17,6 +17,7 @@ import os
 import urllib
 import logging
 import jinja2
+from google.appengine.api import urlfetch
 # don't know if the next two are needed, but they are listed in comments for now just in case
 # import time
 # import datetime
@@ -36,11 +37,17 @@ class RedditResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
         main_template = jinja_env.get_template('templates/reddit.html')
-        self.response.out.write(main_template.render())
+        variables = {
+            'search_term': self.request.get("search-input")
+        }
+        self.response.out.write(main_template.render(variables))
     # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(arg):
+    def post(self):
         main_template = jinja_env.get_template('templates/reddit.html')
-        self.response.out.write(main_template.render())
+        variables = {
+            'search_term': self.request.get("search-input")
+        }
+        self.response.out.write(main_template.render(variables))
 
 class FacebookResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
@@ -48,7 +55,7 @@ class FacebookResultsHandler(webapp2.RequestHandler):
         main_template = jinja_env.get_template('templates/facebook.html')
         self.response.out.write(main_template.render())
     # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(arg):
+    def post(self):
         main_template = jinja_env.get_template('templates/facebook.html')
         self.response.out.write(main_template.render())
 
@@ -58,7 +65,7 @@ class TwitterResultsHandler(webapp2.RequestHandler):
         main_template = jinja_env.get_template('templates/twitter.html')
         self.response.out.write(main_template.render())
     # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(arg):
+    def post(self):
         main_template = jinja_env.get_template('templates/twitter.html')
         self.response.out.write(main_template.render())
 
@@ -68,7 +75,7 @@ class GiphyResultsHandler(webapp2.RequestHandler):
         main_template = jinja_env.get_template('templates/giphy.html')
         self.response.out.write(main_template.render())
     # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(arg):
+    def post(self):
         main_template = jinja_env.get_template('templates/giphy.html')
         self.response.out.write(main_template.render())
 
