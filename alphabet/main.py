@@ -38,9 +38,7 @@ class RedditResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
         main_template = jinja_env.get_template('templates/reddit.html')
-        # variables = {
-        #     'search_term': self.request.get("search-input")
-        # }
+        # This calls the fetch_results function with the search_input variable as an argument, it returns the variables necessary to build the reddit embeded posts
         variables = {"posts":  self.fetch_results(self.request.get("search-input")),}
         print variables
         self.response.out.write(main_template.render(variables))
@@ -48,22 +46,22 @@ class RedditResultsHandler(webapp2.RequestHandler):
     def post(self):
         main_template = jinja_env.get_template('templates/reddit.html')
         variables = {
-            'search_term': self.request.get("search-input")
+            'search_term': self.request.get("search_input")
         }
         self.response.out.write(main_template.render(variables))
     def fetch_results(self, search_term):
-        """Use the Reddit API to fetch several posts."""
+        # This function uses the Reddit API to fetch several posts for the get/post function to just call
+        #
         logging.info("===== %s.get()" % self.__class__.__name__)
-
+        # This base_url is used as a variable for building essential URLs
         base_url = 'https://reddit.com/'
-        # other_params = '&api_key={key}&limit={num}'.format(key=GIPHY_API_KEY, num=10)
+        # The following lines build the url that is used to retrieve the search results JSON file and then loads the JSON file so it can be read and variables can be taken from it
         search_terms = 'search.json?q={term}'.format(term=search_term)
         fullurl = base_url + search_terms
         logging.info("Fetching: %s" % fullurl)
-
         data_source = urlfetch.fetch(fullurl)
-
         results = json.loads(data_source.content)
+        #
         # Weird issue with href that causes the embeding to load slowly, might have to do with an unnecessary attribute on the the url given to us by the JSON
         posts = []
         for i in range(0,11):
@@ -79,6 +77,17 @@ class RedditResultsHandler(webapp2.RequestHandler):
             posts.append(post)
         return posts
 
+        # post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
+        # subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
+        # posts = {
+        #     'timestamp': results['data']['children'][0]['data']['created'],
+        #     'post_href': post_href,
+        #     'title': results['data']['children'][0]['data']['title'],
+        #     'subreddit_href': subreddit_href,
+        #     'subreddit_name': results['data']['children'][0]['data']['subreddit'],
+        #     'search_term': search_term,
+        # }
+        # return posts
 
 class FacebookResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet

@@ -13,9 +13,10 @@
   </head>
   <body>
     <!-- This is set up for a basic search bar and button. Eventually this needs variables and attributes modified to whatever the setup is. -->
-    <form class="" action="index.html" method="post">
+    <form class="" action="reddit" method="get">
       <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
-      <textarea autofocus="True" name="search-input" rows="8" cols="40"></textarea>
+      <!-- <textarea autofocus="True" name="search_input" rows="8" cols="40" value="example"></textarea> -->
+      <input type="text" name="search_input" value={{search_term}}>
       <!-- Just the submit button. -->
       <input type="submit" name="submit" value="Search">
     <br>
@@ -26,6 +27,7 @@
     <br>
     <!-- Search results should be displayed below here. -->
 
+    <!-- This is an example of how the reddit embed should work. -->
     <!-- <blockquote class="reddit-card" data-card-created="1469466396">
       <a href="https://www.reddit.com/r/pics/comments/4uijxc/dogs_are_not_allowed_on_nyc_subway_unless_theyre/?ref=share&ref_source=embed">Dogs Are Not Allowed On NYC Subway Unless They’re In A Carrier…So This Happened</a>
        from
@@ -33,6 +35,7 @@
      </blockquote>
      <script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script> -->
     {% for post in posts %}
+    <!-- This is the template for the reddit embeded post -->
     <blockquote class="reddit-card" data-card-created={{timestamp}}>
       <a href={{post_href}}>{{title}}</a>
       <a href{{subreddit_href}}>{{subreddit_name}}</a>
