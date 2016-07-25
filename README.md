@@ -1,5 +1,5 @@
 # Alphabet
-Let's see how much hell we can cause with these files. Why is my last name the only word that's a spelling error?
+Let's see how much hell we can cause with these files.
 
 Developers:
 - Bryce Frey
