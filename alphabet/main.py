@@ -2,8 +2,7 @@
 #
 # Copyright 2007 Google Inc.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
@@ -38,10 +37,18 @@ class RedditResultsHandler(webapp2.RequestHandler):
     def get(self):
         main_template = jinja_env.get_template('templates/reddit.html')
         self.response.out.write(main_template.render())
+    # Do we want to implement the post method? Or only the get method with URL arguments?
+    def post(arg):
+        main_template = jinja_env.get_template('templates/reddit.html')
+        self.response.out.write(main_template.render())
 
 class FacebookResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
+        main_template = jinja_env.get_template('templates/facebook.html')
+        self.response.out.write(main_template.render())
+    # Do we want to implement the post method? Or only the get method with URL arguments?
+    def post(arg):
         main_template = jinja_env.get_template('templates/facebook.html')
         self.response.out.write(main_template.render())
 
@@ -50,10 +57,18 @@ class TwitterResultsHandler(webapp2.RequestHandler):
     def get(self):
         main_template = jinja_env.get_template('templates/twitter.html')
         self.response.out.write(main_template.render())
+    # Do we want to implement the post method? Or only the get method with URL arguments?
+    def post(arg):
+        main_template = jinja_env.get_template('templates/twitter.html')
+        self.response.out.write(main_template.render())
 
 class GiphyResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Giphy search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
+        main_template = jinja_env.get_template('templates/giphy.html')
+        self.response.out.write(main_template.render())
+    # Do we want to implement the post method? Or only the get method with URL arguments?
+    def post(arg):
         main_template = jinja_env.get_template('templates/giphy.html')
         self.response.out.write(main_template.render())
 
