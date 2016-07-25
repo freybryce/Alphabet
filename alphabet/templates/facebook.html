@@ -10,6 +10,23 @@
     <title>Facebook Results</title>
   </head>
   <body>
+    <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '510228622519808',
+        xfbml      : true,
+        version    : 'v2.7'
+      });
+    };
+
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) {return;}
+       js = d.createElement(s); js.id = id;
+       js.src = "//connect.facebook.net/en_US/sdk.js";
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+     </script>
     <!-- This is set up for a basic search bar and button. Eventually this needs variables and attributes modified to whatever the setup is. -->
     <form class="" action="index.html" method="post">
       <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
