@@ -32,12 +32,12 @@
        <a href="http://www.reddit.com/r/pics">pics</a>
      </blockquote>
      <script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script> -->
-
+    {% for post in posts %}
     <blockquote class="reddit-card" data-card-created={{timestamp}}>
       <a href={{post_href}}>{{title}}</a>
       <a href{{subreddit_href}}>{{subreddit_name}}</a>
     </blockquote>
-
+    {% endfor %}
 
   </body>
 </html>

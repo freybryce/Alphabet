@@ -41,7 +41,8 @@ class RedditResultsHandler(webapp2.RequestHandler):
         # variables = {
         #     'search_term': self.request.get("search-input")
         # }
-        variables = self.fetch_results(self.request.get("search-input"))
+        variables = {"posts":  self.fetch_results(self.request.get("search-input")),}
+        print variables
         self.response.out.write(main_template.render(variables))
     # Do we want to implement the post method? Or only the get method with URL arguments?
     def post(self):
@@ -64,26 +65,20 @@ class RedditResultsHandler(webapp2.RequestHandler):
 
         results = json.loads(data_source.content)
         # Weird issue with href that causes the embeding to load slowly, might have to do with an unnecessary attribute on the the url given to us by the JSON
-        post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
-        subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
-        posts = {
-            'timestamp': results['data']['children'][0]['data']['created'],
-            'post_href': post_href,
-            'title': results['data']['children'][0]['data']['title'],
-            'subreddit_href': subreddit_href,
-            'subreddit_name': results['data']['children'][0]['data']['subreddit'],
-        }
+        posts = []
+        for i in range(0,11):
+            post_href = base_url + results['data']['children'][i]['data']['permalink'] + "&ref=share&ref_source=embed"
+            subreddit_href = base_url + '/r/' + results['data']['children'][i]['data']['subreddit']
+            post = {
+                'timestamp': results['data']['children'][i]['data']['created'],
+                'post_href': post_href,
+                'title': results['data']['children'][i]['data']['title'],
+                'subreddit_href': subreddit_href,
+                'subreddit_name': results['data']['children'][i]['data']['subreddit'],
+            }
+            posts.append(post)
         return posts
-        # gifs = []
-        # #   for i in results['data']:
-        # #       gifs.append(results['data'][i]['images']['original']['url'])
-        # gifs = [
-        # results['data'][0]['images']['original']['url'],
-        # results['data'][1]['images']['original']['url'],
-        # results['data'][2]['images']['original']['url'],
-        # results['data'][3]['images']['original']['url'],
-        # ]
-        # return gifs
+
 
 class FacebookResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
