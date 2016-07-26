@@ -157,12 +157,6 @@ class GiphyResultsHandler(webapp2.RequestHandler):
             embed_urls.append(gif_entry['embed_url'])
         return embed_urls
 
-    def giphy_search(self, search_term):
-        logging.info("===== %s.get()" % self.__class__.__name__)
-        #
-        giphy_API_key = 'dc6zaTOxFJmzC'
-        base_url = 'http://api.giphy.com/v1/gifs/search?'
-
      # Do we want to implement the post method? Or only the get method with URL arguments?
     #def post(self):
     #    main_template = jinja_env.get_template('templates/giphy.html')
