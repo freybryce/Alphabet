@@ -49,11 +49,13 @@ class RedditResultsHandler(webapp2.RequestHandler):
     def get(self):
         main_template = jinja_env.get_template('templates/reddit.html')
         # This calls the fetch_results function with the search_input variable as an argument, it returns the variables necessary to build the reddit embeded posts
-        # variables = {
-        #     "posts":  self.fetch_results(self.request.get("search_input")),
-        # }
+        variables = {
+            "posts":  self.fetch_results(self.request.get("search_input")),
+            "test": "hello",
+        }
         # logging.info("The variables variable is passing in: " + str(variables))
-        variables = self.fetch_results(self.request.get("search_input"))
+        # variables = self.fetch_results(self.request.get("search_input"))
+        logging.info('Here is the list being going to HTML {lists}'.format(lists=variables))
         self.response.out.write(main_template.render(variables))
     # Do we want to implement the post method? Or only the get method with URL arguments?
     def post(self):
@@ -78,38 +80,60 @@ class RedditResultsHandler(webapp2.RequestHandler):
         # logging.info("results= " + str(results))
         #
         # Weird issue with href that causes the embeding to load slowly, might have to do with an unnecessary attribute on the the url given to us by the JSON
-        # posts = []
+        posts_list = []
+        for post_entry in results['data']['children']:
+            post_dict = {}
+
+            post_href = base_url + post_entry['data']['permalink'] + "&ref=share&ref_source=embed"
+
+            post_dict['post_href'] = post_href
+
+            subreddit_href = base_url + '/r/' + post_entry['data']['subreddit']
+
+            post_dict['subreddit_href'] = subreddit_href
+
+            post_dict["timestamp"] = post_entry['data']['created']
+
+            post_dict["title"] = post_entry['data']['title']
+            posts_list.append(post_dict)
+        # logging.info('Here is the posts_list being returned: {item}'.format(item=posts_list))
+        return posts_list
+
+        # posts = {}
         # for i in range(0,11):
-        #     post_href = base_url + results['data']['children'][i]['data']['permalink'] + "&ref=share&ref_source=embed"
-        #     #
-        #     subreddit_href = base_url + '/r/' + results['data']['children'][i]['data']['subreddit']
-        #     #
+        #     # post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
+        #     # #
+        #     # subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
+        #     # #
         #     post = {
         #         'timestamp': results['data']['children'][i]['data']['created'],
-        #         'post_href': post_href,
+        #         # 'post_href': post_href,
         #         'title': results['data']['children'][i]['data']['title'],
-        #         'subreddit_href': subreddit_href,
-        #         'subreddit_name': results['data']['children'][i]['data']['subreddit'],
+        #         # 'subreddit_href': subreddit_href,
+        #         # 'subreddit_name': results['data']['children'][0]['data']['subreddit'],
         #     }
-        #     posts.append(post)
+        #     posts[i] = post
         #     logging.info("Post being appended" + str(post) + '\n')
-        # # logging.info("Here is the posts dictionary we have built: {post}".format(post=posts))
+        # # logging.info("Here is the posts list we have built: {post}".format(post=posts))
         # return posts
 
-        post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
-        subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
-        posts = {
-            'timestamp': results['data']['children'][0]['data']['created'],
-            'post_href': post_href,
-            'title': results['data']['children'][0]['data']['title'],
-            'subreddit_href': subreddit_href,
-            'subreddit_name': results['data']['children'][0]['data']['subreddit'],
-            'search_term': search_term,
-        }
-        return posts
+        # post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
+        # subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
+        # posts = {
+        #     'timestamp': results['data']['children'][0]['data']['created'],
+        #     'post_href': post_href,
+        #     'title': results['data']['children'][0]['data']['title'],
+        #     'subreddit_href': subreddit_href,
+        #     'subreddit_name': results['data']['children'][0]['data']['subreddit'],
+        #     'search_term': search_term,
+        # }
+        # return posts
 
-#{% for post in posts['posts'] %}
-#{% endfor %}
+# {% for post in posts %}
+# other test sample
+# {% endfor %}
+#
+#
 
 class FacebookResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
