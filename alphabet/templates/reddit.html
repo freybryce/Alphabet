@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <title>Reddit Results</title>
     <!-- needed for reddit embed posts to work -->
-    <script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script>
+
   </head>
   <body>
     <!-- This is set up for a basic search bar and button. Eventually this needs variables and attributes modified to whatever the setup is. -->
@@ -21,9 +21,10 @@
       <input type="submit" name="submit" value="Search">
     <br>
     <!-- Temporary links instead of tabs placed here. To be fixed in the future. -->
-    <a href="/facebook">Facebook Results</a>
-    <a href="/twitter">Twitter Results</a>
+    <!-- <a href="/facebook">Facebook Results</a> -->
+    <!-- <a href="/twitter">Twitter Results</a> -->
     <a href="/giphy">Giphy Results</a>
+    <a href="/youtube">YouTube Results</a>
     <br>
     <!-- Search results should be displayed below here. -->
 
@@ -36,13 +37,17 @@
      <script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script> -->
 
     <!-- This is the template for the reddit embeded post -->
-    
-    <blockquote class="reddit-card" data-card-created={{timestamp}}>
-      <a href={{post_href}}>{{title}}test sample</a>
-      <a href={{subreddit_href}}>{{subreddit_name}}</a>
+
+{% for post in posts %}
+    <blockquote class="reddit-card" data-card-created={{post['timestamp']}}>
+      <a href={{post['post_href']}}>{{post['title']}}</a>
+      <a href={{post['subreddit_href']}}>{{post['subreddit_name']}}</a>
     </blockquote>
-
-
-
+{% endfor %}
+<!-- <blockquote class="reddit-card" data-card-created={{timestamp}}>
+  <a href={{post_href}}>{{title}}test sample</a>
+  <a href={{subreddit_href}}>{{subreddit_name}}</a>
+</blockquote> -->
+<script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script>
   </body>
 </html>
