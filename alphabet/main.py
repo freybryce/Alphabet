@@ -19,6 +19,8 @@ import logging
 import jinja2
 import unicodedata
 from google.appengine.api import urlfetch
+from apiclient.discovery import build
+from optparse import OptionParser
 # don't know if the next two are needed, but they are listed in comments for now just in case
 # import time
 # import datetime
@@ -27,6 +29,14 @@ from google.appengine.api import urlfetch
 
 # Make sure to use relative path for file path calls, that is how this version of the jinja Environment is set up. Also check copied code for 'jinja_env' vs 'jinja_environment'
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+
+youtube_jinja_env = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'])
+
+DEVELOPER_KEY = "AIzaSyCtZRkKChHBPT-mwRj1hgPwK23F9IdkZuQ"
+YOUTUBE_API_SERVICE_NAME = "youtube"
+YOUTUBE_API_VERSION = "v3"
 
 class MainHandler(webapp2.RequestHandler):
     # This handler manages the front page and should be connected to 'frontpage.html'
@@ -68,38 +78,38 @@ class RedditResultsHandler(webapp2.RequestHandler):
         # logging.info("results= " + str(results))
         #
         # Weird issue with href that causes the embeding to load slowly, might have to do with an unnecessary attribute on the the url given to us by the JSON
-        posts = []
-        for i in range(0,11):
-            post_href = base_url + results['data']['children'][i]['data']['permalink'] + "&ref=share&ref_source=embed"
-            #
-            subreddit_href = base_url + '/r/' + results['data']['children'][i]['data']['subreddit']
-            #
-            post = {
-                'timestamp': results['data']['children'][i]['data']['created'],
-                'post_href': post_href,
-                'title': results['data']['children'][i]['data']['title'],
-                'subreddit_href': subreddit_href,
-                'subreddit_name': results['data']['children'][i]['data']['subreddit'],
-            }
-            posts.append(post)
-            logging.info("Post being appended" + str(post) + '\n')
-        # logging.info("Here is the posts dictionary we have built: {post}".format(post=posts))
-        return posts
-
-        # post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
-        # subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
-        # posts = {
-        #     'timestamp': results['data']['children'][0]['data']['created'],
-        #     'post_href': post_href,
-        #     'title': results['data']['children'][0]['data']['title'],
-        #     'subreddit_href': subreddit_href,
-        #     'subreddit_name': results['data']['children'][0]['data']['subreddit'],
-        #     'search_term': search_term,
-        # }
+        # posts = []
+        # for i in range(0,11):
+        #     post_href = base_url + results['data']['children'][i]['data']['permalink'] + "&ref=share&ref_source=embed"
+        #     #
+        #     subreddit_href = base_url + '/r/' + results['data']['children'][i]['data']['subreddit']
+        #     #
+        #     post = {
+        #         'timestamp': results['data']['children'][i]['data']['created'],
+        #         'post_href': post_href,
+        #         'title': results['data']['children'][i]['data']['title'],
+        #         'subreddit_href': subreddit_href,
+        #         'subreddit_name': results['data']['children'][i]['data']['subreddit'],
+        #     }
+        #     posts.append(post)
+        #     logging.info("Post being appended" + str(post) + '\n')
+        # # logging.info("Here is the posts dictionary we have built: {post}".format(post=posts))
         # return posts
 
-#
-#
+        post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
+        subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
+        posts = {
+            'timestamp': results['data']['children'][0]['data']['created'],
+            'post_href': post_href,
+            'title': results['data']['children'][0]['data']['title'],
+            'subreddit_href': subreddit_href,
+            'subreddit_name': results['data']['children'][0]['data']['subreddit'],
+            'search_term': search_term,
+        }
+        return posts
+
+#{% for post in posts['posts'] %}
+#{% endfor %}
 
 class FacebookResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
@@ -136,12 +146,58 @@ class DefaultHandler(webapp2.RequestHandler):
     def get(self):
         self.response.write('<h1>404 NOT FOUND</h2><br><p>Try "/"</p>')
 
+class YouTubeResultsHandler(webapp2.RequestHandler):
+    # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
+    def get(self):
+         if DEVELOPER_KEY == "REPLACE_ME":
+           self.response.write("You must set up a project and get an API key to run this project.  Please visit <landing page> to do so.")
+         else:
+           youtube = build(
+             YOUTUBE_API_SERVICE_NAME,
+             YOUTUBE_API_VERSION,
+             developerKey=DEVELOPER_KEY)
+           search_response = youtube.search().list(
+             q="Hello",
+             part="id,snippet",
+             maxResults=5
+           ).execute()
+
+           videos = []
+           channels = []
+           playlists = []
+
+           for search_result in search_response.get("items", []):
+             if search_result["id"]["kind"] == "youtube#video":
+                 videos.append("%s (%s)" % (search_result["snippet"]["title"],
+                   search_result["id"]["videoId"]))
+             elif search_result["id"]["kind"] == "youtube#channel":
+                 channels.append("%s (%s)" % (search_result["snippet"]["title"],
+                   search_result["id"]["channelId"]))
+             elif search_result["id"]["kind"] == "youtube#playlist":
+                 playlists.append("%s (%s)" % (search_result["snippet"]["title"],
+                   search_result["id"]["playlistId"]))
+
+           template_values = {
+            'videos': videos,
+            'channels': channels,
+            'playlists': playlists
+           }
+
+           self.response.headers['Content-type'] = 'text/plain'
+           template = youtube_jinja_env.get_template('templates/youtube.html')
+           self.response.write(template.render(template_values))
+
+
+
+
+
 routes = [
     ('/', MainHandler),
     ('/reddit', RedditResultsHandler),
     ('/facebook', FacebookResultsHandler),
     ('/twitter', TwitterResultsHandler),
     ('/giphy', GiphyResultsHandler),
+    ('/youtube', YouTubeResultsHandler),
     # The following are reserved URL paths and their potential handlers. Don't know if we will need them yet, but just incase...
     #
     # ('/login', LoginHandler),
