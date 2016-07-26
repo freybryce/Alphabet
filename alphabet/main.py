@@ -19,8 +19,8 @@ import logging
 import jinja2
 import unicodedata
 from google.appengine.api import urlfetch
-# from apiclient.discovery import build
-# from optparse import OptionParser
+from apiclient.discovery import build
+from optparse import OptionParser
 # don't know if the next two are needed, but they are listed in comments for now just in case
 # import time
 # import datetime
@@ -183,7 +183,7 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
             'playlists': playlists
            }
 
-           self.response.headers['Content-type'] = 'text/plain'
+        #    self.response.headers['Content-type'] = 'text/plain'
            template = youtube_jinja_env.get_template('templates/youtube.html')
            self.response.write(template.render(template_values))
 
