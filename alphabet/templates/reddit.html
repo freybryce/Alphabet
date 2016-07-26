@@ -34,13 +34,15 @@
        <a href="http://www.reddit.com/r/pics">pics</a>
      </blockquote>
      <script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script> -->
-    {% for post in posts %}
+
     <!-- This is the template for the reddit embeded post -->
+    {% for post in posts['posts'] %}
     <blockquote class="reddit-card" data-card-created={{timestamp}}>
-      <a href={{post_href}}>{{title}}</a>
+      <a href={{post_href}}>{{title}}test sample</a>
       <a href={{subreddit_href}}>{{subreddit_name}}</a>
     </blockquote>
     {% endfor %}
+
 
   </body>
 </html>
