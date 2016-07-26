@@ -42,7 +42,7 @@ class RedditResultsHandler(webapp2.RequestHandler):
         #     'search_term': self.request.get("search-input")
         # }
         variables = self.fetch_results(self.request.get("search-input"))
-        self.response.out.write(main_template.render(variables))
+        self.response.write(main_template.render(variables))
     # Do we want to implement the post method? Or only the get method with URL arguments?
     def post(self):
         main_template = jinja_env.get_template('templates/reddit.html')
@@ -105,18 +105,59 @@ class TwitterResultsHandler(webapp2.RequestHandler):
         main_template = jinja_env.get_template('templates/twitter.html')
         self.response.out.write(main_template.render())
 
+#COPY AND PASTE GIPHY HANDLER HERE IF EVERYTHING BURNS DOWN
 class GiphyResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Giphy search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
-        main_template = jinja_env.get_template('templates/giphy.html')
-        self.response.out.write(main_template.render())
-    # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(self):
-        main_template = jinja_env.get_template('templates/giphy.html')
-        self.response.out.write(main_template.render())
+        template = jinja_env.get_template('templates/giphy.html')
+        #renders search input from HTML file
+        search_term = self.request.get('search_input')
+        embed_urls = self.fetch_embed_urls(search_term)
+        variables = {
+            'search_term': search_term,
+            'giphy_embed_url': embed_urls,
+        }
+
+        self.response.write(template.render(variables))
+
+#Finds the embed URL needed to display the embed URLs
+    def fetch_embed_urls(self, search_term):
+        logging.info("===== %s.get()" % self.__class__.__name__)
+        data_source = urlfetch.fetch(self.giphy_search(search_term))
+        results = json.loads(data_source.content)
+        #Creates and array of URL of embed URLs for each item of the results
+        embed_urls = []
+        for gif_entry in results['data']:
+            embed_urls.append(gif_entry['embed_url'])
+        return embed_urls
+
+    def giphy_search(self, search_term):
+        logging.info("===== %s.get()" % self.__class__.__name__)
+        #
+        giphy_API_key = 'dc6zaTOxFJmzC'
+        base_url = 'http://api.giphy.com/v1/gifs/search?'
+
+     # Do we want to implement the post method? Or only the get method with URL arguments?
+    #def post(self):
+    #    main_template = jinja_env.get_template('templates/giphy.html')
+    #    self.response.out.write(main_template.render())
+
+    #Searches through the Giphy URL after entering a search_term
+    def giphy_search(self, search_term):
+        logging.info("===== %s.get()" % self.__class__.__name__)
+        #
+        giphy_API_key = 'dc6zaTOxFJmzC'
+        base_url = 'http://api.giphy.com/v1/gifs/search?'
+        url_params = {
+            'q': search_term,
+            'api_key': 'dc6zaTOxFJmzC',
+            'limit': 5,
+        }
+        full_url = base_url + urllib.urlencode(url_params)
+        return full_url
 
 class DefaultHandler(webapp2.RequestHandler):
-    # This handler should be designed to give the user a page that incourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
+    # This handler should be designed to give the user a page that encourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
     def get(self):
         self.response.write('<h1>404 NOT FOUND</h2><br><p>Try "/"</p>')
 
