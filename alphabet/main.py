@@ -19,8 +19,8 @@ import logging
 import jinja2
 import unicodedata
 from google.appengine.api import urlfetch
-from apiclient.discovery import build
-from optparse import OptionParser
+#from apiclient.discovery import build
+#from optparse import OptionParser
 # don't know if the next two are needed, but they are listed in comments for now just in case
 # import time
 # import datetime
@@ -48,13 +48,6 @@ class RedditResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
         main_template = jinja_env.get_template('templates/reddit.html')
-<<<<<<< HEAD
-        # variables = {
-        #     'search_term': self.request.get("search-input")
-        # }
-        variables = self.fetch_results(self.request.get("search-input"))
-        self.response.write(main_template.render(variables))
-=======
         # This calls the fetch_results function with the search_input variable as an argument, it returns the variables necessary to build the reddit embeded posts
         variables = {
             "posts":  self.fetch_results(self.request.get("search_input")),
@@ -62,7 +55,6 @@ class RedditResultsHandler(webapp2.RequestHandler):
         logging.info("The variables variable is passing in: " + str(variables))
         # variables = self.fetch_results(self.request.get("search_input"))
         self.response.out.write(main_template.render(variables))
->>>>>>> a65304ae8a0dbcc3b49424ebb7655a5f780d712e
     # Do we want to implement the post method? Or only the get method with URL arguments?
     def post(self):
         main_template = jinja_env.get_template('templates/reddit.html')
@@ -185,7 +177,7 @@ class GiphyResultsHandler(webapp2.RequestHandler):
         url_params = {
             'q': search_term,
             'api_key': 'dc6zaTOxFJmzC',
-            'limit': 5,
+            'limit': 25,
         }
         full_url = base_url + urllib.urlencode(url_params)
         return full_url
