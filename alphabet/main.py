@@ -19,8 +19,8 @@ import logging
 import jinja2
 import unicodedata
 from google.appengine.api import urlfetch
-#from apiclient.discovery import build
-#from optparse import OptionParser
+from apiclient.discovery import build
+from optparse import OptionParser
 # don't know if the next two are needed, but they are listed in comments for now just in case
 # import time
 # import datetime
@@ -52,6 +52,7 @@ class RedditResultsHandler(webapp2.RequestHandler):
         variables = {
             "posts":  self.fetch_results(self.request.get("search_input")),
             "test": "hello",
+            'search_term': self.request.get("search_input"),
         }
         # logging.info("The variables variable is passing in: " + str(variables))
         # variables = self.fetch_results(self.request.get("search_input"))
@@ -99,42 +100,6 @@ class RedditResultsHandler(webapp2.RequestHandler):
         # logging.info('Here is the posts_list being returned: {item}'.format(item=posts_list))
         return posts_list
 
-        # posts = {}
-        # for i in range(0,11):
-        #     # post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
-        #     # #
-        #     # subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
-        #     # #
-        #     post = {
-        #         'timestamp': results['data']['children'][i]['data']['created'],
-        #         # 'post_href': post_href,
-        #         'title': results['data']['children'][i]['data']['title'],
-        #         # 'subreddit_href': subreddit_href,
-        #         # 'subreddit_name': results['data']['children'][0]['data']['subreddit'],
-        #     }
-        #     posts[i] = post
-        #     logging.info("Post being appended" + str(post) + '\n')
-        # # logging.info("Here is the posts list we have built: {post}".format(post=posts))
-        # return posts
-
-        # post_href = base_url + results['data']['children'][0]['data']['permalink'] + "&ref=share&ref_source=embed"
-        # subreddit_href = base_url + '/r/' + results['data']['children'][0]['data']['subreddit']
-        # posts = {
-        #     'timestamp': results['data']['children'][0]['data']['created'],
-        #     'post_href': post_href,
-        #     'title': results['data']['children'][0]['data']['title'],
-        #     'subreddit_href': subreddit_href,
-        #     'subreddit_name': results['data']['children'][0]['data']['subreddit'],
-        #     'search_term': search_term,
-        # }
-        # return posts
-
-# {% for post in posts %}
-# other test sample
-# {% endfor %}
-#
-#
-
 class FacebookResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
@@ -167,9 +132,7 @@ class GiphyResultsHandler(webapp2.RequestHandler):
             'search_term': search_term,
             'giphy_embed_url': embed_urls,
         }
-
         self.response.write(template.render(variables))
-
 #Finds the embed URL needed to display the embed URLs
     def fetch_embed_urls(self, search_term):
         logging.info("===== %s.get()" % self.__class__.__name__)
@@ -200,11 +163,6 @@ class GiphyResultsHandler(webapp2.RequestHandler):
         full_url = base_url + urllib.urlencode(url_params)
         return full_url
 
-class DefaultHandler(webapp2.RequestHandler):
-    # This handler should be designed to give the user a page that encourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
-    def get(self):
-        self.response.write('<h1>404 NOT FOUND</h2><br><p>Try "/"</p>')
-
 class YouTubeResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
@@ -216,10 +174,12 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
              YOUTUBE_API_VERSION,
              developerKey=DEVELOPER_KEY)
            search_response = youtube.search().list(
-             q="Hello",
+             q=self.request.get("search_input"),
              part="id,snippet",
-             maxResults=5
+             maxResults=25
            ).execute()
+
+           logging.info("Here is the JSON file that YouTube is passing through to us: {JSON}".format(JSON=search_response))
 
            videos = []
            channels = []
@@ -239,14 +199,18 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
            template_values = {
             'videos': videos,
             'channels': channels,
-            'playlists': playlists
+            'playlists': playlists,
+            'search_input': self.request.get("search_input"),
            }
-
+        #    for some reason the below line was part of the code YouTube gave me, but it returns the html as plain text
         #    self.response.headers['Content-type'] = 'text/plain'
            template = youtube_jinja_env.get_template('templates/youtube.html')
            self.response.write(template.render(template_values))
 
-
+class DefaultHandler(webapp2.RequestHandler):
+    # This handler should be designed to give the user a page that encourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
+    def get(self):
+        self.response.write('<h1>404 NOT FOUND</h2><br><p>Try "/"</p>')
 
 
 
