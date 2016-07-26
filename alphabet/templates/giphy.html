@@ -14,13 +14,13 @@
     <!-- Creates a block with search bar and button, and tab switches -->
     <div class="search_and_switch">
       <!-- Redirects to /giphy after search. -->
+      <br>
       <form class="" action="giphy" method="get" >
         <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
         <input type="text" name="search_input">
         <!-- Just the submit button. -->
         <input type="submit" name="submit" value="Search">
       </form>
-      <br>
       <!-- Temporary links instead of tabs placed here. To be fixed in the future. -->
       <a href="/reddit">Reddit Results</a>
       <!-- <a href="/facebook">Facebook Results</a> -->
@@ -30,8 +30,9 @@
     </div>
     <!-- Search results should be displayed below here. -->
     <!-- Embed URL is already built into the API. Use the slug from API to do the "a href". Receive input from the user-->
+    <br><br><br><br><br><br>
     {% for embed_url in giphy_embed_url %}
-    <p><iframe src="{{embed_url}}" max-height=900px max-width=900px width=auto height=auto frameBorder="0" class="giphy-embed" allowFullScreen></iframe></p><br><br>
+    <p><iframe src="{{embed_url}}" width=50% height=auto frameBorder="0" class="giphy-embed" allowFullScreen></iframe></p> <br>
     {% endfor %}
 
   </body>
