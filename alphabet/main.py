@@ -49,11 +49,11 @@ class RedditResultsHandler(webapp2.RequestHandler):
     def get(self):
         main_template = jinja_env.get_template('templates/reddit.html')
         # This calls the fetch_results function with the search_input variable as an argument, it returns the variables necessary to build the reddit embeded posts
-        variables = {
-            "posts":  self.fetch_results(self.request.get("search_input")),
-        }
-        logging.info("The variables variable is passing in: " + str(variables))
-        # variables = self.fetch_results(self.request.get("search_input"))
+        # variables = {
+        #     "posts":  self.fetch_results(self.request.get("search_input")),
+        # }
+        # logging.info("The variables variable is passing in: " + str(variables))
+        variables = self.fetch_results(self.request.get("search_input"))
         self.response.out.write(main_template.render(variables))
     # Do we want to implement the post method? Or only the get method with URL arguments?
     def post(self):
@@ -224,7 +224,7 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
             'playlists': playlists
            }
 
-           self.response.headers['Content-type'] = 'text/plain'
+        #    self.response.headers['Content-type'] = 'text/plain'
            template = youtube_jinja_env.get_template('templates/youtube.html')
            self.response.write(template.render(template_values))
 
