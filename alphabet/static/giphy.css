@@ -9,7 +9,7 @@ body {
 }
 
 .search_and_switch {
-  background-color: black;
+  background-color: white;
   opacity: .85;
   padding-bottom: 15px;
   width: 101%;
@@ -24,10 +24,10 @@ body {
   position: absolute;
   left: 20px;
   top: 5px;
-  color: white;
+  color: black;
 }
 .redirect a {
-  color: white;
+  color: black;
   font-size: .73em;
   margin-right: 2px;
 }
