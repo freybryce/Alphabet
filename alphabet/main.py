@@ -105,6 +105,11 @@ class FacebookResultsHandler(webapp2.RequestHandler):
     def get(self):
         main_template = jinja_env.get_template('templates/facebook.html')
         self.response.out.write(main_template.render())
+        import facebook
+        token = 'EAAHQDNvMrgABAJfoObvmQl1QPaPMznPdTOyaY69eAVobHZCqjcEVueQEXoCyo7ZBHryzISRcyjcK5BPlQvZAKxsIVIpASttEmiZCJJtp5GsHVOS9S2W7zZAvyXNVWTtOdsvs4Hr5eipYPDiLiSXx0oQ8ZA15yFxiIY9BDZBfTRx5QZDZD'
+        graph = facebook.GraphAPI(access_token=token)
+        data = graph.request('/search?q=Clayton&type=user')
+        logging.info("Her is the data that Facebook is giving us: {data}".format(data=data))
     # Do we want to implement the post method? Or only the get method with URL arguments?
     def post(self):
         main_template = jinja_env.get_template('templates/facebook.html')
@@ -114,11 +119,20 @@ class TwitterResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests twitter search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
         main_template = jinja_env.get_template('templates/twitter.html')
-        self.response.out.write(main_template.render())
+        variables = {
+            'search_term': self.request.get("search_input"),
+            'embed_href': self.href_builder(self.request.get("search_input")),
+        }
+        self.response.out.write(main_template.render(variables))
     # Do we want to implement the post method? Or only the get method with URL arguments?
     def post(self):
         main_template = jinja_env.get_template('templates/twitter.html')
         self.response.out.write(main_template.render())
+    def href_builder(self, search_term):
+        # This function builds a url to be passed into the template for the twitter widget
+        base_url = 'https://twitter.com/hashtag/'
+        final_url = base_url + search_term
+        return final_url
 
 #COPY AND PASTE GIPHY HANDLER HERE IF EVERYTHING BURNS DOWN
 class GiphyResultsHandler(webapp2.RequestHandler):
@@ -170,13 +184,13 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
             self.response.write("You must set up a project and get an API key to run this project.  Please visit <landing page> to do so.")
         else:
             youtube = build(
-             YOUTUBE_API_SERVICE_NAME,
-             YOUTUBE_API_VERSION,
-             developerKey=DEVELOPER_KEY)
+                YOUTUBE_API_SERVICE_NAME,
+                YOUTUBE_API_VERSION,
+                developerKey=DEVELOPER_KEY)
             search_response = youtube.search().list(
-             q=self.request.get("search_input"),
-             part="id,snippet",
-             maxResults=25
+                q=self.request.get("search_input"),
+                part="id,snippet",
+                maxResults=25
             ).execute()
 
             # logging.info("Here is the JSON file that YouTube is passing through to us: {JSON}".format(JSON=search_response))
@@ -233,6 +247,70 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
             template = youtube_jinja_env.get_template('templates/youtube.html')
             self.response.write(template.render(template_values))
 
+class InstagramResultsHandler(webapp2.RequestHandler):
+    # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
+    def get(self):
+        main_template = jinja_env.get_template('templates/instagram.html')
+        # This calls the fetch_results function with the search_input variable as an argument, it returns the variables necessary to build the reddit embeded posts
+        # variables = {
+        #     "posts":  self.fetch_results(self.request.get("search_input")),
+        #     "test": "hello",
+        #     'search_term': self.request.get("search_input"),
+        # }
+        # logging.info("The variables variable is passing in: " + str(variables))
+        # variables = self.fetch_results(self.request.get("search_input"))
+        # logging.info('Here is the list being going to HTML {lists}'.format(lists=variables))
+        self.request.get('code')
+
+        variables = {
+            # 'search_term': self.request.get("search_input")
+            'token': self.request.get("code")
+        }
+        self.response.out.write(main_template.render())
+    # Do we want to implement the post method? Or only the get method with URL arguments?
+    def post(self):
+        main_template = jinja_env.get_template('templates/reddit.html')
+        variables = {
+            # 'search_term': self.request.get("search_input")
+            'token': self.request.get("code")
+        }
+        logging.info(variables)
+        self.response.out.write(main_template.render(variables))
+    def fetch_results(self, search_term):
+        # This function uses the Reddit API to fetch several posts for the get/post function to just call
+        #
+        logging.info("===== %s.get()" % self.__class__.__name__)
+        # This base_url is used as a variable for building essential URLs
+        base_url = 'https://reddit.com'
+        # The following lines build the url that is used to retrieve the search results JSON file and then loads the JSON file so it can be read and variables can be taken from it
+        logging.info("This is our " + str(search_term))
+        search_terms = 'search.json?q={term}'.format(term=search_term)
+        fullurl = base_url + '/' + search_terms
+        logging.info("Fetching: %s" % fullurl)
+        data_source = urlfetch.fetch(fullurl)
+        results = json.loads(data_source.content)
+        # logging.info("results= " + str(results))
+        #
+        # Weird issue with href that causes the embeding to load slowly, might have to do with an unnecessary attribute on the the url given to us by the JSON
+        posts_list = []
+        for post_entry in results['data']['children']:
+            post_dict = {}
+
+            post_href = base_url + post_entry['data']['permalink'] + "&ref=share&ref_source=embed"
+
+            post_dict['post_href'] = post_href
+
+            subreddit_href = base_url + '/r/' + post_entry['data']['subreddit']
+
+            post_dict['subreddit_href'] = subreddit_href
+
+            post_dict["timestamp"] = post_entry['data']['created']
+
+            post_dict["title"] = post_entry['data']['title']
+            posts_list.append(post_dict)
+        # logging.info('Here is the posts_list being returned: {item}'.format(item=posts_list))
+        return posts_list
+
 class DefaultHandler(webapp2.RequestHandler):
     # This handler should be designed to give the user a page that encourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
     def get(self):
@@ -247,6 +325,7 @@ routes = [
     ('/twitter', TwitterResultsHandler),
     ('/giphy', GiphyResultsHandler),
     ('/youtube', YouTubeResultsHandler),
+    ('/instagram', InstagramResultsHandler),
     # The following are reserved URL paths and their potential handlers. Don't know if we will need them yet, but just incase...
     #
     # ('/login', LoginHandler),

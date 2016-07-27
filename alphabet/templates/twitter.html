@@ -11,9 +11,9 @@
   </head>
   <body>
     <!-- This is set up for a basic search bar and button. Eventually this needs variables and attributes modified to whatever the setup is. -->
-    <form class="" action="index.html" method="post">
+    <form class="" action="/twitter" method="get">
       <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
-      <textarea autofocus="True" name="search_input" rows="8" cols="40"></textarea>
+      <input type="text" autofocus="True" name="search_input" value={{search_term}}>
       <!-- Just the submit button. -->
       <input type="submit" name="submit" value="Search">
     <br>
@@ -24,6 +24,11 @@
     <a href="/youtube">YouTube Results</a>
     <br>
     <!-- Search results should be displayed below here. -->
-
+    <a class="twitter-timeline"
+       href='https://twitter.com/hashtag/trump'
+       data-widget-id="758370933228736512"
+       data-tweet-limit='20'>#{{search_term}} Tweets</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+    </script>
   </body>
 </html>
