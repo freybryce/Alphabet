@@ -1,3 +1,9 @@
+$('img').mouseover(changeBackground)
+function changeBackground() {
+  $(this).animate({width: '100%'}, 1500);
+  $('body').css('background', 'white');
+}
+
 #PASTE IN GIPHY HANDLER AREA
 class GiphyResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Giphy search results. Not sure if we are using the get method, the post method or both yet
