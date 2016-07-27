@@ -187,8 +187,12 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
 
            for search_result in search_response.get("items", []):
              if search_result["id"]["kind"] == "youtube#video":
-                 videos.append("%s (%s)" % (search_result["snippet"]["title"],
-                   search_result["id"]["videoId"]))
+                videos.append('<img src="%s"/><br>%s (%s)' % (
+                    search_result["snippet"]["thumbnails"]["high"]["url"],
+                    search_result["snippet"]["title"],
+                    search_result["id"]["videoId"]
+                    )
+                )
              elif search_result["id"]["kind"] == "youtube#channel":
                  channels.append("%s (%s)" % (search_result["snippet"]["title"],
                    search_result["id"]["channelId"]))
