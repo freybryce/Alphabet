@@ -166,50 +166,72 @@ class GiphyResultsHandler(webapp2.RequestHandler):
 class YouTubeResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests Facebook search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
-         if DEVELOPER_KEY == "REPLACE_ME":
-           self.response.write("You must set up a project and get an API key to run this project.  Please visit <landing page> to do so.")
-         else:
-           youtube = build(
+        if DEVELOPER_KEY == "REPLACE_ME":
+            self.response.write("You must set up a project and get an API key to run this project.  Please visit <landing page> to do so.")
+        else:
+            youtube = build(
              YOUTUBE_API_SERVICE_NAME,
              YOUTUBE_API_VERSION,
              developerKey=DEVELOPER_KEY)
-           search_response = youtube.search().list(
+            search_response = youtube.search().list(
              q=self.request.get("search_input"),
              part="id,snippet",
              maxResults=25
-           ).execute()
+            ).execute()
 
-           logging.info("Here is the JSON file that YouTube is passing through to us: {JSON}".format(JSON=search_response))
+            # logging.info("Here is the JSON file that YouTube is passing through to us: {JSON}".format(JSON=search_response))
 
-           videos = []
-           channels = []
-           playlists = []
+            videos = []
+            channels = []
+            playlists = []
 
-           for search_result in search_response.get("items", []):
-             if search_result["id"]["kind"] == "youtube#video":
-                videos.append('<img src="%s"/><br>%s (%s)' % (
-                    search_result["snippet"]["thumbnails"]["high"]["url"],
-                    search_result["snippet"]["title"],
-                    search_result["id"]["videoId"]
-                    )
-                )
-             elif search_result["id"]["kind"] == "youtube#channel":
-                 channels.append("%s (%s)" % (search_result["snippet"]["title"],
-                   search_result["id"]["channelId"]))
-             elif search_result["id"]["kind"] == "youtube#playlist":
-                 playlists.append("%s (%s)" % (search_result["snippet"]["title"],
-                   search_result["id"]["playlistId"]))
+# <img src="%s"/><br>
+# search_result["snippet"]["thumbnails"]["high"]["url"],
 
-           template_values = {
-            'videos': videos,
-            'channels': channels,
-            'playlists': playlists,
-            'search_input': self.request.get("search_input"),
-           }
+            base_url = "https://www.youtube.com/embed/"
+
+            for search_result in search_response.get("items", []):
+                if search_result["id"]["kind"] == "youtube#video":
+                    videos_dict = {}
+
+                    video_id = search_result["id"]["videoId"]
+                    embed_url = base_url + video_id
+                    videos_dict['embed_url'] = embed_url
+
+                    video_title = search_result["snippet"]["title"]
+                    videos_dict['title'] = video_title
+
+                    videos.append(videos_dict)
+                elif search_result["id"]["kind"] == "youtube#channel":
+                    channels.append("%s (%s)" % (search_result["snippet"]["title"],search_result["id"]["channelId"]))
+                elif search_result["id"]["kind"] == "youtube#playlist":
+                    playlists.append("%s (%s)" % (search_result["snippet"]["title"],                    search_result["id"]["playlistId"]))
+
+        #    for search_result in search_response.get("items", []):
+        #      if search_result["id"]["kind"] == "youtube#video":
+        #         videos.append('%s (%s)' % (
+        #             search_result["snippet"]["title"],
+        #             search_result["id"]["videoId"]
+        #             )
+        #         )
+        #      elif search_result["id"]["kind"] == "youtube#channel":
+        #          channels.append("%s (%s)" % (search_result["snippet"]["title"],
+        #            search_result["id"]["channelId"]))
+        #      elif search_result["id"]["kind"] == "youtube#playlist":
+        #          playlists.append("%s (%s)" % (search_result["snippet"]["title"],
+        #            search_result["id"]["playlistId"]))
+
+            template_values = {
+                'videos': videos,
+                'channels': channels,
+                'playlists': playlists,
+                'search_input': self.request.get("search_input"),
+            }
+            logging.info("This is the template_values dictionary that is being passed through to the template: {dict}".format(dict=template_values))
         #    for some reason the below line was part of the code YouTube gave me, but it returns the html as plain text
         #    self.response.headers['Content-type'] = 'text/plain'
-           template = youtube_jinja_env.get_template('templates/youtube.html')
-           self.response.write(template.render(template_values))
+            template = youtube_jinja_env.get_template('templates/youtube.html')
+            self.response.write(template.render(template_values))
 
 class DefaultHandler(webapp2.RequestHandler):
     # This handler should be designed to give the user a page that encourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
