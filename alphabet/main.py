@@ -247,12 +247,11 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
             template = youtube_jinja_env.get_template('templates/youtube.html')
             self.response.write(template.render(template_values))
 
-<<<<<<< HEAD
 class AboutHandler(webapp2.RequestHandler):
     def get(self):
         main_template = jinja_env.get_template('templates/about.html')
         self.response.out.write(main_template.render())
-=======
+
 class InstagramResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
@@ -316,7 +315,6 @@ class InstagramResultsHandler(webapp2.RequestHandler):
             posts_list.append(post_dict)
         # logging.info('Here is the posts_list being returned: {item}'.format(item=posts_list))
         return posts_list
->>>>>>> 8e34f7d90c3d977c78a008d0894751c008cd3e51
 
 class DefaultHandler(webapp2.RequestHandler):
     # This handler should be designed to give the user a page that encourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
