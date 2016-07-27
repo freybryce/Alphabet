@@ -1,0 +1,23 @@
+* {
+  background-color: grey;
+}
+
+h1 {
+  color: #c5d4d0;
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: bold;
+}
+
+p {
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+}
+
+.boxed {
+  border: 3px solid #b1b1cd;
+  padding-left: 10px;
+}
