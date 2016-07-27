@@ -1,0 +1,53 @@
+body {
+  transition: background-color 0.65s ease;
+  background-color: black;
+  text-align: center;
+}
+
+body:hover {
+  background-color: white;
+}
+
+body img {
+  max-width: 500px;
+  width: 50%;
+  max-height: 75%;
+}
+
+h2 {
+  color: #474747;
+  text-align: center;
+}
+
+form {
+  text-align: center;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+input[type=text] {
+  transition: width .4s ease-in-out;
+  background-color: rgba(0, 0, 0, 0);
+  color: #878787;
+  outline: none;
+  border-color: black;
+  padding: 7px 7px 7px 7px;
+  border-radius: 10px;
+  font-size: 16px;
+  width: 20%;
+  text-align: left;
+
+}
+
+input[type=text]:hover {
+  width: 50%;
+}
+/*
+input[type=submit] {
+  background-color: black;
+  color: #878787;
+
+}
+
+input[type=submit]:hover {
+  background-color: #222222;
+}*/
