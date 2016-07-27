@@ -1,5 +1,5 @@
 body {
-  transition: background-color 0.65s ease;
+  transition: background-color 1s ease;
   background-color: black;
   text-align: center;
 }
