@@ -260,63 +260,46 @@ class InstagramResultsHandler(webapp2.RequestHandler):
         # logging.info("The variables variable is passing in: " + str(variables))
         # variables = self.fetch_results(self.request.get("search_input"))
         # logging.info('Here is the list being going to HTML {lists}'.format(lists=variables))
-        self.request.get('code')
+        code_token = self.request.get('code')
 
+        # authorization_code_response = urllib.urlopen('https://api.instagram.com/oauth/access_token/?client_id=2009b75bdc4743c1b3c9fe5e018db660&client_secret=cf65448159204e678fdce1321a0b4db1&scope=public_content&response_type=token&grant_type=authorization_code&code={code_token}'.format(code_token=code_token)).read()
+        #
+        # logging.info('This is the oauth: ' + authorization_code_response)
         variables = {
             # 'search_term': self.request.get("search_input")
-            'token': self.request.get("code")
+            'token': self.request.get("code"),
         }
-        self.response.out.write(main_template.render())
-    # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(self):
-        main_template = jinja_env.get_template('templates/reddit.html')
-        variables = {
-            # 'search_term': self.request.get("search_input")
-            'token': self.request.get("code")
-        }
-        logging.info(variables)
+
+        if code_token:
+            base_url = 'https://api.instagram.com/oauth/access_token'
+            params = {
+                'client_id': '2009b75bdc4743c1b3c9fe5e018db660',
+                'client_secret': '9d781f7aa7624b0c873972c6c763df5f',
+                'response_type': 'token',
+                'scope': 'public_content',
+                'grant_type': 'authorization_code',
+                'code': code_token,
+                'redirect_uri': 'http://localhost:8080/instagram'
+            }
+
+            data_source = urlfetch.fetch(base_url, method=urlfetch.POST, payload=urllib.urlencode(params))
+            logging.info('This is the oauth: ' + str(data_source.content))
+            authorization_code_response = json.loads(data_source.content)
+            variables[
+            'authorization_code_response'] =  str(authorization_code_response)
+
         self.response.out.write(main_template.render(variables))
-    def fetch_results(self, search_term):
-        # This function uses the Reddit API to fetch several posts for the get/post function to just call
-        #
-        logging.info("===== %s.get()" % self.__class__.__name__)
-        # This base_url is used as a variable for building essential URLs
-        base_url = 'https://reddit.com'
-        # The following lines build the url that is used to retrieve the search results JSON file and then loads the JSON file so it can be read and variables can be taken from it
-        logging.info("This is our " + str(search_term))
-        search_terms = 'search.json?q={term}'.format(term=search_term)
-        fullurl = base_url + '/' + search_terms
-        logging.info("Fetching: %s" % fullurl)
-        data_source = urlfetch.fetch(fullurl)
-        results = json.loads(data_source.content)
-        # logging.info("results= " + str(results))
-        #
-        # Weird issue with href that causes the embeding to load slowly, might have to do with an unnecessary attribute on the the url given to us by the JSON
-        posts_list = []
-        for post_entry in results['data']['children']:
-            post_dict = {}
-
-            post_href = base_url + post_entry['data']['permalink'] + "&ref=share&ref_source=embed"
-
-            post_dict['post_href'] = post_href
-
-            subreddit_href = base_url + '/r/' + post_entry['data']['subreddit']
-
-            post_dict['subreddit_href'] = subreddit_href
-
-            post_dict["timestamp"] = post_entry['data']['created']
-
-            post_dict["title"] = post_entry['data']['title']
-            posts_list.append(post_dict)
-        # logging.info('Here is the posts_list being returned: {item}'.format(item=posts_list))
-        return posts_list
+    # Do we want to implement the post method? Or only the get method with URL arguments?
 
 class DefaultHandler(webapp2.RequestHandler):
     # This handler should be designed to give the user a page that encourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
     def get(self):
         self.response.write('<h1>404 NOT FOUND</h2><br><p>Try "/"</p>')
 
-
+class PrivacyPolicyHandler(webapp2.RequestHandler):
+    def get(self):
+        template = jinja_env.get_template('templates/privacypolicy.html')
+        self.response.write(template.render())
 
 routes = [
     ('/', MainHandler),
@@ -326,6 +309,7 @@ routes = [
     ('/giphy', GiphyResultsHandler),
     ('/youtube', YouTubeResultsHandler),
     ('/instagram', InstagramResultsHandler),
+    ('/privacy', PrivacyPolicyHandler),
     # The following are reserved URL paths and their potential handlers. Don't know if we will need them yet, but just incase...
     #
     # ('/login', LoginHandler),
