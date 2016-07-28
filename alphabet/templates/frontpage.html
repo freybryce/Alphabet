@@ -8,20 +8,23 @@
     <!-- This is a tag Atom inserts by default (when autocomplete is used that is) but it is important because it improves cross-compatibility in some cases. -->
     <meta charset="utf-8">
     <!-- This is just the project name, so we do need to put the the final project name here for the page title. -->
-    <title>lit - light it up</title>
+    <title>Lit - Light It Up</title>
     <link href="static/frontpage.css" type="text/css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Libre+Franklin' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <button onclick="location.href= '/about'" class="button" style="vertical-align:middle"><span>About Us </span></button>
     <img src="static/lit.svg" alt="lit" text-align="center"/>
     <!-- This is set up for a basic search bar and button. Eventually this needs variables and attributes modified to whatever the setup is. -->
     <form class="" action="reddit" method="get">
       <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
       <input type="text" name="search_input" value="" autofocus="True" placeholder="LIGHT IT UP. . .">
-
+      </form>
+      <!-- These are the buttoms in a row along the bottom -->
+      <div id="bottomButtons">
+      <div class="bottomLine"><button onclick="location.href= '/about'" class="button" style="vertical-align:middle"><span>About Us </span></button></div>
+      <div class="bottomLine"><button onclick="location.href= '/privacy'" class="button" style="vertical-align:middle"><span>Privacy Policy </span></button></div>
+    </div>
       <br><br><br><br>
-    </form>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="static/frontpage.js"></script>
   </body>
