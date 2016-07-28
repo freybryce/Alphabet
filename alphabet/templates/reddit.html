@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css?family=Libre+Franklin" rel="stylesheet">
   </head>
   <body>
-    <div class="search_and_switch">
+    <div class="search_and_switch" style="z-index:1">
       <!-- Redirects to /giphy after search. -->
 
         <div id="heading">
@@ -39,12 +39,14 @@
       </form>
     </div>
     </div>
+    <div class="reddit_posts" style="z-index: 2">
     <br><br><br><br><br>
-{% for post in posts %}
-    <blockquote class="reddit-card" data-card-created={{post['timestamp']}}>
-      <a href={{post['post_href']}}>{{post['title']}}</a>
-      <a href={{post['subreddit_href']}}>{{post['subreddit_name']}}</a>
-    </blockquote>
-{% endfor %}
+    {% for post in posts %}
+      <blockquote class="reddit-card" data-card-created={{post['timestamp']}}>
+        <a href={{post['post_href']}}>{{post['title']}}</a>
+        <a href={{post['subreddit_href']}}>{{post['subreddit_name']}}</a>
+      </blockquote>
+    {% endfor %}
+    </div>
   </body>
 </html>
