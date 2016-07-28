@@ -90,11 +90,11 @@ input[type=text]:hover {
 
 /*Buttons at the bottom*/
 #bottomButtons {
-  width:100%;
+   width:35%;
    text-align: center;
    position:absolute;
-bottom:0%;
-right: -37%;
+   bottom:0%;
+   right: 0%;
 }
 .bottomLine {
    display: inline-block;
