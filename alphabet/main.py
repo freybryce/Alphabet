@@ -247,6 +247,11 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
             template = youtube_jinja_env.get_template('templates/youtube.html')
             self.response.write(template.render(template_values))
 
+class AboutHandler(webapp2.RequestHandler):
+    def get(self):
+        main_template = jinja_env.get_template('templates/about.html')
+        self.response.out.write(main_template.render())
+
 class InstagramResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
@@ -308,6 +313,7 @@ routes = [
     ('/twitter', TwitterResultsHandler),
     ('/giphy', GiphyResultsHandler),
     ('/youtube', YouTubeResultsHandler),
+    ('/about', AboutHandler),
     ('/instagram', InstagramResultsHandler),
     ('/privacy', PrivacyPolicyHandler),
     # The following are reserved URL paths and their potential handlers. Don't know if we will need them yet, but just incase...

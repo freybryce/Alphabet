@@ -1,11 +1,27 @@
 * {
-  font-family: 'Oswald', sans-serif;
+  font-family: 'Libre Franklin', sans-serif;
   text-decoration: none;
 }
 
 body {
   text-align: center;
   background-image: url(http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/cheap_diagonal_fabric.png);
+  font-size: 12px;
+}
+
+input[type=text] {
+  background-color: rgba(0, 0, 0, 0);
+  color: red;
+  outline: none;
+  border-color: black;
+  border-width: 1px;
+  padding: 3px 3px 3px 10px;
+  margin-top: 5px;
+  border-radius: 10px;
+  font-size: 14px;
+  width: 20%;
+  text-align: left;
+
 }
 
 .search_and_switch {
@@ -20,14 +36,21 @@ body {
   text-align: center;
 }
 
-#heading {
-  position: absolute;
-  left: 20px;
-  top: 5px;
-  color: black;
+.search_and_submit {
+  text-align: right;
+  margin-right: 30px;
+  margin-top: 5px;
 }
 .redirect a {
   color: black;
   font-size: .73em;
   margin-right: 2px;
+}
+
+#heading {
+  position: absolute;
+  left: 40%;
+  top: -5px;
+  color: black;
+  font-size: 20px;
 }
