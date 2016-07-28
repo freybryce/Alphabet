@@ -1,0 +1,43 @@
+<!-- This template is for instagram results. We decided that since reddit is the front page of the internet that it would be the front page of our project (unless a different one is made default by user login). Things that should be included on this page (as far as we have discussed) include (from the top, down) a search bar that (for new searchs and to potentially show the current search), a set of tabs to switch between results pages, and search results. -->
+
+<!-- New comments about the page as a whole, including questions, concerns, goals, etc. should be listed above this comment. -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- This is a tag Atom inserts by default (when autocomplete is used that is) but it is important because it improves cross-compatibility in some cases. -->
+    <meta charset="utf-8">
+    <title>Instagram Results</title>
+  </head>
+  <body>
+    <hr>
+    {{authorization_code_response}}
+    <hr>
+    <!-- This is set up for a basic search bar and button. Eventually this needs variables and attributes modified to whatever the setup is. -->
+    <form class="" action="reddit" method="get">
+      <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
+      <input type="text" name="search_input" value={{search_term}}>
+      <!-- Just the submit button. -->
+      <input type="submit" name="submit" value="Search">
+    <br>
+    <!-- Temporary links instead of tabs placed here. To be fixed in the future. -->
+    <!-- <a href="/facebook">Facebook Results</a> -->
+    <!-- <a href="/twitter">Twitter Results</a> -->
+    <a href="/giphy">Giphy Results</a>
+    <a href="/youtube">YouTube Results</a>
+    <a href="/reddit">Reddit Results</a>
+    <br>
+    <!-- Search results should be displayed below here. -->
+
+    <a href="https://api.instagram.com/oauth/authorize/?client_id=2009b75bdc4743c1b3c9fe5e018db660&scope=public_content&redirect_uri=http://localhost:8080/instagram&response_type=code">test</a>
+
+
+    <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-version="7" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:8px;"> <div style=" background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;"> <div style=" background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAMUExURczMzPf399fX1+bm5mzY9AMAAADiSURBVDjLvZXbEsMgCES5/P8/t9FuRVCRmU73JWlzosgSIIZURCjo/ad+EQJJB4Hv8BFt+IDpQoCx1wjOSBFhh2XssxEIYn3ulI/6MNReE07UIWJEv8UEOWDS88LY97kqyTliJKKtuYBbruAyVh5wOHiXmpi5we58Ek028czwyuQdLKPG1Bkb4NnM+VeAnfHqn1k4+GPT6uGQcvu2h2OVuIf/gWUFyy8OWEpdyZSa3aVCqpVoVvzZZ2VTnn2wU8qzVjDDetO90GSy9mVLqtgYSy231MxrY6I2gGqjrTY0L8fxCxfCBbhWrsYYAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;"></div></div> <p style=" margin:8px 0 0 0; padding:0 4px;"> <a href="https://www.instagram.com/p/BIXbnazhYgS/" style=" color:#000; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none; word-wrap:break-word;" target="_blank">Arte legal da nossa fã @maridrawings_. #batman #brucewayne #superman #clarkkent #dc #dccomics #fanart Siga a gente no Snap 👻 legiaodosherois 👻</a></p> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;">A photo posted by Snap: legiaodosherois (@legiaodosherois) on <time style=" font-family:Arial,sans-serif; font-size:14px; line-height:17px;" datetime="2016-07-27T13:11:15+00:00">Jul 27, 2016 at 6:11am PDT</time></p></div></blockquote>
+    <script async defer src="//platform.instagram.com/en_US/embeds.js"></script>
+
+    <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-version="7" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:658px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:8px;"> <div style=" background:#F8F8F8; line-height:0; margin-top:40px; padding:50.0% 0; text-align:center; width:100%;"> <div style=" background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAMUExURczMzPf399fX1+bm5mzY9AMAAADiSURBVDjLvZXbEsMgCES5/P8/t9FuRVCRmU73JWlzosgSIIZURCjo/ad+EQJJB4Hv8BFt+IDpQoCx1wjOSBFhh2XssxEIYn3ulI/6MNReE07UIWJEv8UEOWDS88LY97kqyTliJKKtuYBbruAyVh5wOHiXmpi5we58Ek028czwyuQdLKPG1Bkb4NnM+VeAnfHqn1k4+GPT6uGQcvu2h2OVuIf/gWUFyy8OWEpdyZSa3aVCqpVoVvzZZ2VTnn2wU8qzVjDDetO90GSy9mVLqtgYSy231MxrY6I2gGqjrTY0L8fxCxfCBbhWrsYYAAAAAElFTkSuQmCC); display:block; height:44px; margin:0 auto -44px; position:relative; top:-22px; width:44px;"></div></div> <p style=" margin:8px 0 0 0; padding:0 4px;"> <a href="http://instagram.com/p/fA9uwTtkSN/" style=" color:#000; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none; word-wrap:break-word;" target="_blank">Arte legal da nossa fã @maridrawings_. #batman #brucewayne #superman #clarkkent #dc #dccomics #fanart Siga a gente no Snap 👻 legiaodosherois 👻</a></p> <p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;">A photo posted by Snap: legiaodosherois (@legiaodosherois) on <time style=" font-family:Arial,sans-serif; font-size:14px; line-height:17px;" datetime="2016-07-27T13:11:15+00:00">Jul 27, 2016 at 6:11am PDT</time></p></div></blockquote>
+<script async defer src="//platform.instagram.com/en_US/embeds.js"></script>
+
+https://api.instagram.com/oembed?url=http://instagr.am/p/fA9uwTtkSN/
+  </body>
+</html>
