@@ -1,8 +1,54 @@
-$('img').mouseover(changeBackground)
-function changeBackground() {
-  $(this).animate({width: '100%'}, 1500);
-  $('body').css('background', 'white');
-}
+<!-- This template is for Giphy results. Things that should be included on this page (as far as we have discussed) include (from the top, down) a search bar that (for new searchs and to potentially show the current search), a set of tabs to switch between results pages, and search results. -->
+
+<!-- New comments about the page as a whole, including questions, concerns, goals, etc. should be listed above this comment. -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- This is a tag Atom inserts by default (when autocomplete is used that is) but it is important because it improves cross-compatibility in some cases. -->
+    <meta charset="utf-8">
+    <title>Giphy Results</title>
+    <link rel="stylesheet" href="static/giphy.css">
+    <link href="https://fonts.googleapis.com/css?family=Libre+Franklin" rel="stylesheet">
+  </head>
+
+
+  <body>
+    <!-- Creates a block with search bar and button, and tab switches -->
+    <div class="search_and_switch">
+      <!-- Redirects to /giphy after search. -->
+
+        <div id="heading">
+          <!-- Creates the logo -->
+          <h1><a href="/"><img src="static/lit.svg" alt="lit" style="height: 50px">giphy</a></h1>
+        </div>
+
+    <!-- Encompasses the search and submit buttons -->
+    <div class="search_and_submit">
+      <br>
+    <!-- Temporary links instead of tabs placed here. To be fixed in the future. -->
+        <a href="/reddit">Reddit Results</a> &nbsp;
+    <!--    <a href="/facebook">Facebook Results</a> &nbsp; -->
+        <a href="/youtube">YouTube Results</a>
+      <br>
+      <form class="" action="giphy" method="get" >
+        <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
+
+
+        <input autofocus="True" name="search_input" type="text" placeholder="Enter your search"></input>
+
+      </form>
+    </div>
+    </div>
+    <!-- Search results should be displayed below here. -->
+    <!-- Embed URL is already built into the API. Use the slug from API to do the "a href". Receive input from the user-->
+    <br><br><br><br><br>
+    {% for embed_url in giphy_embed_url %}
+    <p><iframe src="{{embed_url}}" width=65% height=400px frameBorder="0" class="giphy-embed" allowFullScreen></iframe></p> <br>
+    {% endfor %}
+
+  </body>
+</html>
 
 #PASTE IN GIPHY HANDLER AREA
 class GiphyResultsHandler(webapp2.RequestHandler):
