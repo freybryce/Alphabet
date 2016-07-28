@@ -93,8 +93,6 @@ input[type=text]:hover {
   width:100%;
    text-align: center;
    position:absolute;
-bottom:0%;
-right: -37%;
 }
 .bottomLine {
    display: inline-block;
