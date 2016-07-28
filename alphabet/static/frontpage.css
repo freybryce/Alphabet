@@ -46,6 +46,10 @@ input[type=text]:hover {
   width: 60%;
 }
 
+.search_and_submit a:visted {
+  color: white;
+}
+
 .button {
   display: inline-block;
   border-radius: 4px;

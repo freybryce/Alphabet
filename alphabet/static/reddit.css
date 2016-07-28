@@ -1,3 +1,7 @@
+::-webkit-input-placeholder {
+   color: white;
+}
+
 * {
   font-family: 'Libre Franklin', sans-serif;
   text-decoration: none;
@@ -5,13 +9,13 @@
 
 body {
   text-align: center;
-  background-image: url(http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/cheap_diagonal_fabric.png);
+  background-color: white;
   font-size: 12px;
 }
 
 input[type=text] {
   background-color: rgba(0, 0, 0, 0);
-  color: red;
+  color: white;
   outline: none;
   border-color: black;
   border-width: 1px;
@@ -25,7 +29,7 @@ input[type=text] {
 }
 
 .search_and_switch {
-  background-color: white;
+  background-color: #FF4500;
   opacity: .85;
   padding-bottom: 15px;
   width: 101%;
@@ -51,6 +55,6 @@ input[type=text] {
   position: absolute;
   left: 40%;
   top: 25px;
-  color: black;
+  color: white;
   font-size: 16px;
 }
