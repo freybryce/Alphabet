@@ -20,7 +20,7 @@
 
         <div id="heading">
           <!-- Creates the logo -->
-          <h1><a href="/"><img src="static/lit.svg" alt="lit" style="height: 50px">giphy</a></h1>
+          <h1><a href="/"><img src="static/lit.svg" alt="lit" style="height: 50px">Giphy</a></h1>
         </div>
 
     <!-- Encompasses the search and submit buttons -->
@@ -44,7 +44,7 @@
     <!-- Embed URL is already built into the API. Use the slug from API to do the "a href". Receive input from the user-->
     <br><br><br><br><br>
     {% for embed_url in giphy_embed_url %}
-    <p><iframe src="{{embed_url}}" width=65% height=400px frameBorder="0" class="giphy-embed" allowFullScreen></iframe></p> <br>
+    <p><iframe src="{{embed_url}}" width=55% height=360px frameBorder="0" class="giphy-embed" allowFullScreen></iframe></p> <br>
     {% endfor %}
 
   </body>

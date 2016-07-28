@@ -26,7 +26,7 @@ input[type=text] {
 
 .search_and_switch {
   background-color: white;
-  opacity: .95;
+  opacity: .85;
   padding-bottom: 15px;
   width: 101%;
   margin-top: -20px;
@@ -34,6 +34,10 @@ input[type=text] {
   position: fixed;
   box-shadow:0px 2px 5px #2E2E2E;
   text-align: center;
+}
+
+.search_and_switch a:visited {
+  color: black;
 }
 
 .search_and_submit {

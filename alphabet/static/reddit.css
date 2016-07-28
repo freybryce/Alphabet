@@ -1,7 +1,7 @@
 ::-webkit-input-placeholder {
    color: white;
-
 }
+
 * {
   font-family: 'Libre Franklin', sans-serif;
   text-decoration: none;
@@ -29,7 +29,7 @@ input[type=text] {
 }
 
 .search_and_switch {
-  background-color: #C20100;
+  background-color: #FF4500;
   opacity: .85;
   padding-bottom: 15px;
   width: 101%;
