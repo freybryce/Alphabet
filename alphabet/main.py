@@ -49,11 +49,14 @@ class RedditResultsHandler(webapp2.RequestHandler):
     def get(self):
         main_template = jinja_env.get_template('templates/reddit.html')
         # This calls the fetch_results function with the search_input variable as an argument, it returns the variables necessary to build the reddit embeded posts
+        search_term = self.request.get("search_input")
+
         variables = {
-            "posts":  self.fetch_results(self.request.get("search_input")),
             "test": "hello",
-            'search_term': self.request.get("search_input"),
+            'search_term': search_term,
         }
+        if search_term:
+            variables['posts'] = self.fetch_results(search_term)
         # logging.info("The variables variable is passing in: " + str(variables))
         # variables = self.fetch_results(self.request.get("search_input"))
         logging.info('Here is the list being going to HTML {lists}'.format(lists=variables))
@@ -252,28 +255,63 @@ class AboutHandler(webapp2.RequestHandler):
         main_template = jinja_env.get_template('templates/about.html')
         self.response.out.write(main_template.render())
 
+class InstagramRedirectHandler(webapp2.RequestHandler):
+    def get(self):
+        self.redirect('https://api.instagram.com/oauth/authorize/?client_id=2009b75bdc4743c1b3c9fe5e018db660&scope=public_content&response_type=code&redirect_uri=http://localhost:8080/instapass')
+
+class InstagramOAuthHandler(webapp2.RequestHandler):
+    def get(self):
+        code_token = self.request.get('code')
+
+        base_url = 'https://api.instagram.com/oauth/access_token'
+        params = {
+            'client_id': '2009b75bdc4743c1b3c9fe5e018db660',
+            'client_secret': '9d781f7aa7624b0c873972c6c763df5f',
+            'response_type': 'token',
+            'scope': 'public_content',
+            'grant_type': 'authorization_code',
+            'code': code_token,
+            'redirect_uri': 'http://localhost:8080/instapass',
+        }
+
+        data_source = urlfetch.fetch(base_url, method=urlfetch.POST, payload=urllib.urlencode(params))
+        logging.info('This is the oauth: ' + str(data_source.content))
+        authorization_code_response = json.loads(data_source.content)
+
+        # logging.info("This is the authorization_code_response: " + str(authorization_code_response))
+
+        # variables[
+        # 'authorization_code_response'] =  str(authorization_code_response)
+        access_key = authorization_code_response['access_token']
+        logging.info('This is the silver bullet: ' + access_key)
+
 class InstagramResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
     def get(self):
         main_template = jinja_env.get_template('templates/instagram.html')
-        # This calls the fetch_results function with the search_input variable as an argument, it returns the variables necessary to build the reddit embeded posts
-        # variables = {
-        #     "posts":  self.fetch_results(self.request.get("search_input")),
-        #     "test": "hello",
-        #     'search_term': self.request.get("search_input"),
-        # }
-        # logging.info("The variables variable is passing in: " + str(variables))
-        # variables = self.fetch_results(self.request.get("search_input"))
-        # logging.info('Here is the list being going to HTML {lists}'.format(lists=variables))
+        # Variables being pulled from the website
         code_token = self.request.get('code')
-
-        # authorization_code_response = urllib.urlopen('https://api.instagram.com/oauth/access_token/?client_id=2009b75bdc4743c1b3c9fe5e018db660&client_secret=cf65448159204e678fdce1321a0b4db1&scope=public_content&response_type=token&grant_type=authorization_code&code={code_token}'.format(code_token=code_token)).read()
-        #
-        # logging.info('This is the oauth: ' + authorization_code_response)
+        search_term = self.request.get("search_input")
+        # default variables initiated
+        redirect_url =  urllib.quote_plus('http://localhost:8080/instagram')
+        login_base_url = 'https://api.instagram.com/oauth/authorize/?client_id=2009b75bdc4743c1b3c9fe5e018db660&scope=public_content&response_type=code&redirect_uri='
+        # variables dictionary to be passed into the template, established here for best practice
         variables = {
-            # 'search_term': self.request.get("search_input")
-            'token': self.request.get("code"),
+            'search_term': search_term,
+            'token': code_token,
         }
+
+        self.response.out.write(main_template.render(variables))
+
+    def oldImplementation(self, ):
+        if search_term:
+            redirect_url = urllib.quote_plus('http://localhost:8080/instagram' + '?search_input=' + search_term)
+            variables['login_url'] = login_base_url + redirect_url
+            logging.info(redirect_url)
+            redirect_uri = redirect_url
+        else:
+            variables['login_url'] = login_base_url + redirect_url
+            redirect_uri = urllib.quote_plus('http://localhost:8080/instagram')
 
         if code_token:
             base_url = 'https://api.instagram.com/oauth/access_token'
@@ -284,17 +322,25 @@ class InstagramResultsHandler(webapp2.RequestHandler):
                 'scope': 'public_content',
                 'grant_type': 'authorization_code',
                 'code': code_token,
-                'redirect_uri': 'http://localhost:8080/instagram'
+                'redirect_uri': redirect_uri,
             }
 
             data_source = urlfetch.fetch(base_url, method=urlfetch.POST, payload=urllib.urlencode(params))
             logging.info('This is the oauth: ' + str(data_source.content))
             authorization_code_response = json.loads(data_source.content)
+
+            logging.info("This is the authorization_code_response: " + str(authorization_code_response))
+
             variables[
             'authorization_code_response'] =  str(authorization_code_response)
+            access_key = authorization_code_response['access_token']
+            variables['display_results'] = True
 
-        self.response.out.write(main_template.render(variables))
-    # Do we want to implement the post method? Or only the get method with URL arguments?
+            search_url = 'https://api.instagram.com/v1/tags/search?q=' + search_term + '&access_token=' + str(access_key)
+
+            logging.info('This is the search url {url}'.format(url=search_url))
+
+            #https://api.instagram.com/v1/tags/search?q=snowy&access_token=ACCESS-TOKEN
 
 class DefaultHandler(webapp2.RequestHandler):
     # This handler should be designed to give the user a page that encourages them to go to the front page ('/') for all cases where the page route is not one of the predefined routes. When we get to it, we should create an HTML template for it instead of just writing onto the page as it is now.
@@ -314,7 +360,9 @@ routes = [
     ('/giphy', GiphyResultsHandler),
     ('/youtube', YouTubeResultsHandler),
     ('/about', AboutHandler),
-    ('/instagram', InstagramResultsHandler),
+    ('/instagram', InstagramRedirectHandler),
+    ('/instapass', InstagramOAuthHandler),
+    ('/instasearch', InstagramResultsHandler),
     ('/privacy', PrivacyPolicyHandler),
     # The following are reserved URL paths and their potential handlers. Don't know if we will need them yet, but just incase...
     #
