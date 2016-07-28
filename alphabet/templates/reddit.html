@@ -10,34 +10,36 @@
     <title>Reddit Results</title>
     <!-- needed for reddit embed posts to work -->
     <script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script>
+    <link rel="stylesheet" href="static/giphy.css">
+    <link href="https://fonts.googleapis.com/css?family=Libre+Franklin" rel="stylesheet">
   </head>
   <body>
-    <!-- This is set up for a basic search bar and button. Eventually this needs variables and attributes modified to whatever the setup is. -->
-    <form class="" action="reddit" method="get">
-      <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
-      <!-- <textarea autofocus="True" name="search_input" rows="8" cols="40" value="example"></textarea> -->
-      <input type="text" name="search_input" value={{search_term}}>
-      <!-- Just the submit button. -->
-      <input type="submit" name="submit" value="Search">
-    <br>
+    <div class="search_and_switch">
+      <!-- Redirects to /giphy after search. -->
+
+        <div id="heading">
+          <!-- Creates the logo -->
+          <h1><a href="/"><img src="static/lit.svg" alt="lit" style="height: 50px">YouTube</a></h1>
+        </div>
+
+    <!-- Encompasses the search and submit buttons -->
+    <div class="search_and_submit">
+      <br>
     <!-- Temporary links instead of tabs placed here. To be fixed in the future. -->
-    <!-- <a href="/facebook">Facebook Results</a> -->
-    <!-- <a href="/twitter">Twitter Results</a> -->
-    <a href="/giphy">Giphy Results</a>
-    <a href="/youtube">YouTube Results</a>
-    <br>
-    <!-- Search results should be displayed below here. -->
+        <a href="/youtube">YouTube Results</a> &nbsp;
+      <!--  <a href="/facebook">Facebook Results</a> &nbsp; -->
+        <a href="/giphy">Giphy Results</a>
+      <br>
+      <form class="" action="youtube" method="get" >
+        <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
 
-    <!-- This is an example of how the reddit embed should work. -->
-    <!-- <blockquote class="reddit-card" data-card-created="1469466396">
-      <a href="https://www.reddit.com/r/pics/comments/4uijxc/dogs_are_not_allowed_on_nyc_subway_unless_theyre/?ref=share&ref_source=embed">Dogs Are Not Allowed On NYC Subway Unless They’re In A Carrier…So This Happened</a>
-       from
-       <a href="http://www.reddit.com/r/pics">pics</a>
-     </blockquote>
-     <script async src="//embed.redditmedia.com/widgets/platform.js" charset="UTF-8"></script> -->
 
-    <!-- This is the template for the reddit embeded post -->
+        <input autofocus="True" name="search_input" type="text" placeholder="Enter your search"></input>
 
+      </form>
+    </div>
+    </div>
+    <br><br><br><br><br>
 {% for post in posts %}
     <blockquote class="reddit-card" data-card-created={{post['timestamp']}}>
       <a href={{post['post_href']}}>{{post['title']}}</a>

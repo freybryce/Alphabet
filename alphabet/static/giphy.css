@@ -26,7 +26,7 @@ input[type=text] {
 
 .search_and_switch {
   background-color: white;
-  opacity: .85;
+  opacity: .95;
   padding-bottom: 15px;
   width: 101%;
   margin-top: -20px;
@@ -41,16 +41,12 @@ input[type=text] {
   margin-right: 30px;
   margin-top: 5px;
 }
-.redirect a {
-  color: black;
-  font-size: .73em;
-  margin-right: 2px;
-}
 
-#heading {
+
+#heading a {
   position: absolute;
   left: 40%;
-  top: -5px;
+  top: 25px;
   color: black;
-  font-size: 20px;
+  font-size: 16px;
 }
