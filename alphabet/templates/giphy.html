@@ -27,15 +27,15 @@
     <div class="search_and_submit">
       <br>
     <!-- Temporary links instead of tabs placed here. To be fixed in the future. -->
-        <a href="/reddit">Reddit Results</a> &nbsp;
+        <a href={{reddit_handler}}>Reddit Results</a> &nbsp;
     <!--    <a href="/facebook">Facebook Results</a> &nbsp; -->
-        <a href="/youtube">YouTube Results</a>
+        <a href={{youtube_handler}}>YouTube Results</a>
       <br>
       <form class="" action="giphy" method="get" >
         <!-- This is currently set up with an input tag, do we want to use textarea instead? Also, attributes and variables need to be updated appropriately. -->
 
 
-        <input autofocus="True" name="search_input" type="text" placeholder="Enter your search"></input>
+        <input autofocus="True" name="search_input" type="text" placeholder="Enter your search" value={{search_term}}></input>
 
       </form>
     </div>

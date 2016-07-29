@@ -27,6 +27,9 @@ from optparse import OptionParser
 # the import below will be necessary if we get to using google account sign in
 # from google.appengine.api import users
 
+# Dangerous Global variable being used for testing purposes
+DANGER_TOKEN = ''
+
 # Make sure to use relative path for file path calls, that is how this version of the jinja Environment is set up. Also check copied code for 'jinja_env' vs 'jinja_environment'
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
@@ -54,20 +57,28 @@ class RedditResultsHandler(webapp2.RequestHandler):
         variables = {
             "test": "hello",
             'search_term': search_term,
+            'youtube_handler': '/youtube',
+            'giphy_handler': '/giphy'
         }
         if search_term:
-            variables['posts'] = self.fetch_results(search_term)
+            search_results = self.fetch_results(search_term)
+            variables['youtube_handler'] = '/youtube?search_input={search_term}'.format(search_term=search_term)
+            variables['giphy_handler'] = '/giphy?search_input={search_term}'.format(search_term=search_term)
+            if search_results == 'Reddit API is down':
+                variables['error'] = 'Reddit API is down'
+            else:
+                variables['posts'] = search_results
         # logging.info("The variables variable is passing in: " + str(variables))
         # variables = self.fetch_results(self.request.get("search_input"))
         logging.info('Here is the list being going to HTML {lists}'.format(lists=variables))
         self.response.out.write(main_template.render(variables))
     # Do we want to implement the post method? Or only the get method with URL arguments?
-    def post(self):
-        main_template = jinja_env.get_template('templates/reddit.html')
-        variables = {
-            'search_term': self.request.get("search_input")
-        }
-        self.response.out.write(main_template.render(variables))
+    # def post(self):
+    #     main_template = jinja_env.get_template('templates/reddit.html')
+    #     variables = {
+    #         'search_term': self.request.get("search_input")
+    #     }
+    #     self.response.out.write(main_template.render(variables))
     def fetch_results(self, search_term):
         # This function uses the Reddit API to fetch several posts for the get/post function to just call
         #
@@ -81,6 +92,8 @@ class RedditResultsHandler(webapp2.RequestHandler):
         logging.info("Fetching: %s" % fullurl)
         data_source = urlfetch.fetch(fullurl)
         results = json.loads(data_source.content)
+        # if results['error']:
+        #     return 'Reddit API is down'
         # logging.info("results= " + str(results))
         #
         # Weird issue with href that causes the embeding to load slowly, might have to do with an unnecessary attribute on the the url given to us by the JSON
@@ -148,7 +161,11 @@ class GiphyResultsHandler(webapp2.RequestHandler):
         variables = {
             'search_term': search_term,
             'giphy_embed_url': embed_urls,
+            'reddit_handler': '/reddit',
+            'youtube_handler': '/youtube',
         }
+        variables['youtube_handler'] = '/youtube?search_input={search_term}'.format(search_term=search_term)
+        variables['reddit_handler'] = '/reddit?search_input={search_term}'.format(search_term=search_term)
         self.response.write(template.render(variables))
 #Finds the embed URL needed to display the embed URLs
     def fetch_embed_urls(self, search_term):
@@ -186,12 +203,13 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
         if DEVELOPER_KEY == "REPLACE_ME":
             self.response.write("You must set up a project and get an API key to run this project.  Please visit <landing page> to do so.")
         else:
+            search_term = self.request.get("search_input")
             youtube = build(
                 YOUTUBE_API_SERVICE_NAME,
                 YOUTUBE_API_VERSION,
                 developerKey=DEVELOPER_KEY)
             search_response = youtube.search().list(
-                q=self.request.get("search_input"),
+                q=search_term,
                 part="id,snippet",
                 maxResults=25
             ).execute()
@@ -201,10 +219,8 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
             videos = []
             channels = []
             playlists = []
-
 # <img src="%s"/><br>
 # search_result["snippet"]["thumbnails"]["high"]["url"],
-
             base_url = "https://www.youtube.com/embed/"
 
             for search_result in search_response.get("items", []):
@@ -238,17 +254,21 @@ class YouTubeResultsHandler(webapp2.RequestHandler):
         #          playlists.append("%s (%s)" % (search_result["snippet"]["title"],
         #            search_result["id"]["playlistId"]))
 
-            template_values = {
+            variables = {
                 'videos': videos,
                 'channels': channels,
                 'playlists': playlists,
-                'search_input': self.request.get("search_input"),
+                'search_term': search_term,
+                'reddit_handler': '/reddit',
+                'giphy_handler': '/giphy',
             }
-            logging.info("This is the template_values dictionary that is being passed through to the template: {dict}".format(dict=template_values))
+            variables['reddit_handler'] = '/reddit?search_input={search_term}'.format(search_term=search_term)
+            variables['giphy_handler'] = '/giphy?search_input={search_term}'.format(search_term=search_term)
+            logging.info("This is the template_values dictionary that is being passed through to the template: {dict}".format(dict=variables))
         #    for some reason the below line was part of the code YouTube gave me, but it returns the html as plain text
         #    self.response.headers['Content-type'] = 'text/plain'
             template = youtube_jinja_env.get_template('templates/youtube.html')
-            self.response.write(template.render(template_values))
+            self.response.write(template.render(variables))
 
 class AboutHandler(webapp2.RequestHandler):
     def get(self):
@@ -261,8 +281,10 @@ class InstagramRedirectHandler(webapp2.RequestHandler):
 
 class InstagramOAuthHandler(webapp2.RequestHandler):
     def get(self):
+        global DANGER_TOKEN
+        # grab the code token that Instagram provides as a URL parameter for use in generating an access_token
         code_token = self.request.get('code')
-
+        # url and parameter data needed to generate an access_token
         base_url = 'https://api.instagram.com/oauth/access_token'
         params = {
             'client_id': '2009b75bdc4743c1b3c9fe5e018db660',
@@ -273,17 +295,28 @@ class InstagramOAuthHandler(webapp2.RequestHandler):
             'code': code_token,
             'redirect_uri': 'http://localhost:8080/instapass',
         }
-
+        # url fetching method to get the access_token JSON object and then extract the access_token
         data_source = urlfetch.fetch(base_url, method=urlfetch.POST, payload=urllib.urlencode(params))
+        # logging to see what was returned by Instagram
         logging.info('This is the oauth: ' + str(data_source.content))
         authorization_code_response = json.loads(data_source.content)
-
-        # logging.info("This is the authorization_code_response: " + str(authorization_code_response))
-
-        # variables[
-        # 'authorization_code_response'] =  str(authorization_code_response)
         access_key = authorization_code_response['access_token']
+        # logging to view the access_token for debugging purposes
         logging.info('This is the silver bullet: ' + access_key)
+        # DANGER_TOKEN = access_key
+        # method to post the access_token to the search handler
+        # ISSUE posts data without redirecting
+        data_to_post = {
+            'access_key': access_key,
+            'redirect_uri': 'http://localhost:8080/instasearch',
+        }
+        form_data = urllib.urlencode(data_to_post)
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        result = urlfetch.fetch(url='http://localhost:8080/instasearch',
+            payload=form_data,
+            method=urlfetch.POST,
+            headers=headers)
+        # self.redirect('instasearch')
 
 class InstagramResultsHandler(webapp2.RequestHandler):
     # This handler is designed to process requests reddit search results. Not sure if we are using the get method, the post method or both yet
@@ -302,6 +335,14 @@ class InstagramResultsHandler(webapp2.RequestHandler):
         }
 
         self.response.out.write(main_template.render(variables))
+
+    def post(self):
+        global DANGER_TOKEN
+        access_key = self.request.get('access_key')
+        # access_key = DANGER_TOKEN
+        logging.info('The silver bullet went through ' + access_key)
+        main_template = jinja_env.get_template('templates/instagram.html')
+        self.response.out.write(main_template.render(access_key))
 
     def oldImplementation(self, ):
         if search_term:
@@ -352,6 +393,13 @@ class PrivacyPolicyHandler(webapp2.RequestHandler):
         template = jinja_env.get_template('templates/privacypolicy.html')
         self.response.write(template.render())
 
+class GooglePlusHandler(webapp2.RequestHandler):
+    def get(self):
+        api_key = 'AIzaSyCuDaRuM3ZnHd_PdrvWHypCtITdrWz6w-A'
+        template = jinja_env.get_template('templates/privacypolicy.html')
+        self.response.write(template.render())
+
+
 routes = [
     ('/', MainHandler),
     ('/reddit', RedditResultsHandler),
@@ -360,10 +408,11 @@ routes = [
     ('/giphy', GiphyResultsHandler),
     ('/youtube', YouTubeResultsHandler),
     ('/about', AboutHandler),
-    ('/instagram', InstagramRedirectHandler),
-    ('/instapass', InstagramOAuthHandler),
-    ('/instasearch', InstagramResultsHandler),
     ('/privacy', PrivacyPolicyHandler),
+    # The next three exist but they are dead to me.
+    # ('/instagram', InstagramRedirectHandler),
+    # ('/instapass', InstagramOAuthHandler),
+    # ('/instasearch', InstagramResultsHandler),
     # The following are reserved URL paths and their potential handlers. Don't know if we will need them yet, but just incase...
     #
     # ('/login', LoginHandler),
